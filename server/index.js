@@ -3,7 +3,7 @@ const express = require('express'); // CommonJS Module
 const app = express();
 
 app.get('/', (request, result) => {
-    result.send({ "hi": 'there' });
+    result.send({ "bye": 'buddy' });
 
 });
 
