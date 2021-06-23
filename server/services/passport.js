@@ -1,6 +1,24 @@
-const passport = require("passport");
+const passport = require("passport"); // original passport module in npm
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const keys = require("../config/keys");
+const mongoose = require("mongoose");
+const User = mongoose.model("users");
+
+/* define a function when serializeUser
+    it's to generate the cookies
+ */
+passport.serializeUser((user, done) => {
+  done(null, user.id); // null means no error here we should handle
+});
+
+/* define a function when deserializeUser
+    it's to get the user based on cookies
+*/
+passport.deserializeUser((id, done) => {
+  User.findById(id).then((user) => {
+    done(null, user);
+  });
+});
 
 /*  tell passport a new specific strategy */
 passport.use(
@@ -11,9 +29,21 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     (accessToken, refreshToken, profile, done) => {
-      console.log(accessToken); // allow us to reach back google
-      console.log(refreshToken);
-      console.log(profile);
-    } // error handler
+      const user = User.findOne({ googleID: profile.id }).then(
+        (existingUser) => {
+          if (existingUser) {
+            done(null, existingUser);
+          } else {
+            new User({ googleID: profile.id })
+              .save()
+              .then((user) => done(null, user));
+          }
+        }
+      );
+
+      // console.log(accessToken); // allow us to reach back google
+      // console.log(refreshToken);
+      // console.log(profile);
+    }
   )
 );
