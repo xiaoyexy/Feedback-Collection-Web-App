@@ -27,6 +27,7 @@ passport.use(
       clientID: keys.googleClientID,
       clientSecret: keys.googleClientSecret,
       callbackURL: "/auth/google/callback",
+      proxy: true,
     },
     (accessToken, refreshToken, profile, done) => {
       const user = User.findOne({ googleID: profile.id }).then(
@@ -37,6 +38,7 @@ passport.use(
             new User({ googleID: profile.id })
               .save()
               .then((user) => done(null, user));
+            //call "done" ==> Tell passport that we have finished creating a user and that it should now resume the auth process
           }
         }
       );
