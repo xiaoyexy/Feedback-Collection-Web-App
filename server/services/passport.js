@@ -29,19 +29,15 @@ passport.use(
       callbackURL: "/auth/google/callback",
       proxy: true,
     },
-    (accessToken, refreshToken, profile, done) => {
-      const user = User.findOne({ googleID: profile.id }).then(
-        (existingUser) => {
-          if (existingUser) {
-            done(null, existingUser);
-          } else {
-            new User({ googleID: profile.id })
-              .save()
-              .then((user) => done(null, user));
-            //call "done" ==> Tell passport that we have finished creating a user and that it should now resume the auth process
-          }
-        }
-      );
+
+    async (accessToken, refreshToken, profile, done) => {
+      const existingUser = await User.findOne({ googleID: profile.id });
+      if (existingUser) {
+        return done(null, existingUser);
+      }
+      const user = await new User({ googleID: profile.id }).save();
+      done(null, user);
+      //call "done" ==> Tell passport that we have finished creating a user and that it should now resume the auth process
 
       // console.log(accessToken); // allow us to reach back google
       // console.log(refreshToken);
