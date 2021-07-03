@@ -22,11 +22,13 @@ app.use(
     keys: [keys.cookieKey], // sign or encrypt our cookies
   })
 );
+app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
 /* define routes */
 require("./routes/authRoutes")(app);
+require("./routes/billingRoutes")(app);
 
 const PORT = process.env.PORT || 5000; // Heroku App port or local machine port
 app.listen(PORT);
