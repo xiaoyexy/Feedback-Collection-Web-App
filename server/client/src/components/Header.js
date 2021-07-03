@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 // <a> to different html pages
 // <Link> to different route rendered by React Routers
 import { Link } from "react-router-dom";
+import Payments from "./Payments";
 
 class Header extends Component {
   renderConetnt() {
@@ -16,11 +17,14 @@ class Header extends Component {
           </li>
         );
       default:
-        return (
-          <li>
+        return [
+          <li key="1">
+            <Payments />
+          </li>,
+          <li key="2">
             <a href="/api/logout">Logout</a>
-          </li>
-        );
+          </li>,
+        ];
     }
   }
   render() {
